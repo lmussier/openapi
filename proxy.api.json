@@ -1,0 +1,150 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "DI-ProxyNetwork API",
+    "description": "An OpenAPI 3.0.x specification to manage proxy and network settings.\n",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "version": "0.0.1"
+  },
+  "servers": [
+    {
+      "url": "/a/path/to/a/socket"
+    }
+  ],
+  "paths": {
+    "/proxy": {
+      "get": {
+        "summary": "Retrieve current proxy configuration",
+        "operationId": "getProxy",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-SE-Version",
+            "schema": {
+              "enum": [
+                {
+                  "$ref": "#/info/version"
+                }
+              ]
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation returns a json object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/proxyConf"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Not authorized"
+          },
+          "404": {
+            "description": "Ressource not found"
+          },
+          "5XX": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "summary": "Create or replace the proxy configuration with the data supplied in the request",
+        "operationId": "setProxy",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/proxyConf"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful, configuration created or updated"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Not authorized"
+          },
+          "404": {
+            "description": "Ressource not found"
+          },
+          "5XX": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "proxyDef": {
+        "type": "object",
+        "properties": {
+          "protocol": {
+            "type": "string",
+            "title": "Proxy scheme",
+            "description": "Scheme part of the proxy URL.",
+            "example": "https://"
+          },
+          "host": {
+            "type": "string",
+            "title": "Proxy host",
+            "description": "Hostname or IP address of the proxy.",
+            "example": "gateway.schneider.zscaler.net"
+          },
+          "port": {
+            "type": "integer",
+            "title": "Proxy port",
+            "description": "Port number of the proxy.",
+            "example": 80
+          },
+          "user": {
+            "type": "string",
+            "title": "Proxy authentication username",
+            "description": "Username for proxy authentication.",
+            "example": "jhondoe"
+          },
+          "password": {
+            "type": "string",
+            "title": "Proxy authentication password",
+            "description": "Password for proxy authentication.",
+            "example": "superstrongpassword"
+          },
+          "noProxy": {
+            "type": "string",
+            "title": "No-proxy list",
+            "description": "List of hosts that should be accessed directly without going through the proxy.",
+            "example": "se.com,.se.com,schneider-electric.com,.schneider-electric.com"
+          }
+        }
+      },
+      "proxyConf": {
+        "type": "object",
+        "properties": {
+          "https": {
+            "$ref": "#/components/schemas/proxyDef"
+          },
+          "http": {
+            "$ref": "#/components/schemas/proxyDef"
+          }
+        }
+      }
+    }
+  }
+}
